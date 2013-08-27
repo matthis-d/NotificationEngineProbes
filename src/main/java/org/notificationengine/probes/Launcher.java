@@ -1,9 +1,17 @@
 package org.notificationengine.probes;
 
 import org.apache.log4j.Logger;
+import org.notificationengine.probes.configuration.Configuration;
+import org.notificationengine.probes.configuration.ConfigurationReader;
+import org.notificationengine.probes.constants.Constants;
+import org.notificationengine.probes.domain.Channel;
+import org.notificationengine.probes.probe.FolderProbe;
+import org.notificationengine.probes.probe.IProbe;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.nio.file.*;
-import java.util.List;
+import java.util.Map;
+import java.util.Timer;
 
 
 public class Launcher {
@@ -14,37 +22,51 @@ public class Launcher {
 
         LOGGER.info("Start the launcher");
 
-        //define a folder root
-        Path myDir = Paths.get("/Users/Matthis/tmp");
+        ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"applicationContext.xml"});
 
-        while(Boolean.TRUE) {
-            try {
-                WatchService watcher = myDir.getFileSystem().newWatchService();
-                myDir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
-                        StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+        ConfigurationReader configurationReader = context.getBean(Constants.CONFIGURATION_READER, ConfigurationReader.class);
 
-                WatchKey watckKey = watcher.take();
+        Configuration configuration = configurationReader.readConfiguration();
 
-                List<WatchEvent<?>> events = watckKey.pollEvents();
+        Timer timer = new Timer();
 
+        for (Channel channel : configuration.getChannels()) {
 
-                for (WatchEvent event : events) {
-                    if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
-                        LOGGER.info("Created: " + event.context().toString());
-                    }
-                    if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
-                        LOGGER.info("Delete: " + event.context().toString());
-                    }
-                    if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-                        LOGGER.info("Modify: " + event.context().toString());
-                    }
-                }
+            String topicName = channel.getTopicName();
 
-            } catch (Exception e) {
-                LOGGER.warn("Error: " + e.toString());
+            IProbe probe = null;
+            String probeType = null;
+
+            switch(channel.getProbeType()) {
+
+                case Constants.PROBE_TYPE_FOLDER :
+
+                    LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_FOLDER);
+
+                    probeType = Constants.PROBE_TYPE_FOLDER;
+
+                    Map<String, Object> options = channel.getOptions();
+
+                    String directories = (String)options.get(Constants.DIRECTORIES);
+
+                    probe = new FolderProbe(topicName, directories);
+
+                    break;
+
+                case Constants.PROBE_TYPE_DATABASE :
+
+                    LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_DATABASE);
+
+                    break;
+
+                case Constants.PROBE_TYPE_CUSTOM :
+
+                    LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_CUSTOM);
+
+                    break;
+
             }
         }
-
 
     }
 

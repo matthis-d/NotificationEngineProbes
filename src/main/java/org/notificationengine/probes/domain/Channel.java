@@ -1,7 +1,8 @@
 package org.notificationengine.probes.domain;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Channel {
 
@@ -11,7 +12,7 @@ public class Channel {
 
     private String probeType;
 
-    private Collection<String> thingsToWatch;
+    private Map<String, Object> options;
 
     public Channel(String id) {
 
@@ -19,7 +20,7 @@ public class Channel {
 
         this.id = id;
 
-        this.thingsToWatch = new HashSet<>();
+        this.options = new HashMap<>();
 
     }
 
@@ -47,20 +48,20 @@ public class Channel {
         this.probeType = probeType;
     }
 
-    public Collection<String> getThingsToWatch() {
-        return thingsToWatch;
+    public Map<String, Object> getOptions() {
+        return options;
     }
 
-    public void setThingsToWatch(Collection<String> thingsToWatch) {
-        this.thingsToWatch = thingsToWatch;
+    public void setOptions(Map<String, Object> options) {
+        this.options = options;
     }
 
-    public void addThingToWatch(String thingToWatch) {
-        this.thingsToWatch.add(thingToWatch);
+    public void addOption(String key, Object value) {
+        this.options.put(key, value);
     }
 
-    public void removeThingToWatch(String thingNotToWatch) {
-        this.thingsToWatch.remove(thingNotToWatch);
+    public void removeOption(String key) {
+        this.options.remove(key);
     }
 
     @Override
@@ -69,7 +70,7 @@ public class Channel {
                 "id='" + id + '\'' +
                 ", topicName='" + topicName + '\'' +
                 ", probeType='" + probeType + '\'' +
-                ", thingsToWatch=" + thingsToWatch +
+                ", options=" + options +
                 '}';
     }
 
@@ -82,7 +83,7 @@ public class Channel {
 
         if (!id.equals(channel.id)) return false;
         if (!probeType.equals(channel.probeType)) return false;
-        if (thingsToWatch != null ? !thingsToWatch.equals(channel.thingsToWatch) : channel.thingsToWatch != null)
+        if (options != null ? !options.equals(channel.options) : channel.options != null)
             return false;
         if (!topicName.equals(channel.topicName)) return false;
 
@@ -94,7 +95,7 @@ public class Channel {
         int result = id.hashCode();
         result = 31 * result + topicName.hashCode();
         result = 31 * result + probeType.hashCode();
-        result = 31 * result + (thingsToWatch != null ? thingsToWatch.hashCode() : 0);
+        result = 31 * result + (options != null ? options.hashCode() : 0);
         return result;
     }
 }
