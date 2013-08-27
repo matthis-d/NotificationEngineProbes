@@ -49,7 +49,12 @@ public class Launcher {
 
                     String directories = (String)options.get(Constants.DIRECTORIES);
 
-                    probe = new FolderProbe(topicName, directories);
+                    if(directories != null) {
+                        probe = new FolderProbe(topicName, directories);
+                    }
+                    else {
+                        LOGGER.warn("There was no directories set in the configuration, probe has not been instantiated");
+                    }
 
                     break;
 
