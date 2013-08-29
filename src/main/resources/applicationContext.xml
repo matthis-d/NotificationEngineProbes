@@ -16,4 +16,8 @@
 
     <util:properties id="localSettingsProperties" location="classpath:localsettings.properties"/>
 
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+
+    </bean>
+
 </beans>

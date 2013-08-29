@@ -38,7 +38,14 @@ public class Constants {
 
     final public static String SERVER_URL = "server.url";
 
+    final public static String USER = "user";
 
+    final public static String PASSWORD = "password";
 
+    final public static String DATABASE_URL = "url";
+
+    final public static String DRIVER_CLASS_NAME = "driverClassName";
+
+    final public static String QUERIES = "queries";
 
 }

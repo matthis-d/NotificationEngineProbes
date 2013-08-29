@@ -1,0 +1,17 @@
+{
+    "channels": [
+        {
+            "id": "facturationChannel",
+            "topic": "facturation.societe2",
+            "probeType": "folderProbe",
+            "directories": [
+                {
+                    "path": "/Users/Matthis/Desktop"
+                },
+                {
+                    "path": "/Applications/eclipse/workspace/NotificationEngineProbes/configuration"
+                }
+            ]
+        }
+    ]
+}
