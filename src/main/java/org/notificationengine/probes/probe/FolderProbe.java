@@ -12,6 +12,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.notificationengine.probes.constants.Constants;
 
+import java.io.IOException;
 import java.nio.file.*;
 import java.util.Collection;
 import java.util.HashSet;
@@ -82,11 +83,14 @@ public class FolderProbe extends Probe{
     public void listen() {
 
         for(Path path : this.pathsToWatch) {
-            while(Boolean.TRUE) {
-                try {
-                    WatchService watcher = path.getFileSystem().newWatchService();
-                    path.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
-                            StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+            try {
+                WatchService watcher = path.getFileSystem().newWatchService();
+
+                path.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
+                                       StandardWatchEventKinds.ENTRY_DELETE,
+                                       StandardWatchEventKinds.ENTRY_MODIFY);
+
+                while(Boolean.TRUE) {
 
                     WatchKey watchKey = watcher.take();
 
@@ -118,9 +122,18 @@ public class FolderProbe extends Probe{
 
                     }
 
-                } catch (Exception e) {
-                    LOGGER.warn("Error: " + e.toString());
+                    //reset the key
+                    boolean valid = watchKey.reset();
+
+                    //exit loop if the key is not valid
+                    //e.g. if the directory was deleted
+                    if (!valid) {
+                        break;
+                    }
                 }
+
+            } catch (IOException | InterruptedException e) {
+                LOGGER.warn(ExceptionUtils.getFullStackTrace(e));
             }
         }
     }
