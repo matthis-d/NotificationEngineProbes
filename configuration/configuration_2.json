@@ -4,14 +4,8 @@
             "id": "facturationChannel",
             "topic": "facturation.societe2",
             "probeType": "folderProbe",
-            "directories": [
-                {
-                    "path": "/Users/Matthis/Desktop"
-                },
-                {
-                    "path": "/Applications/eclipse/workspace/NotificationEngineProbes/configuration"
-                }
-            ]
+            "path": "/Users/Matthis/Desktop",
+            "events" : ["created", "modified", "deleted"]
         }
     ]
 }

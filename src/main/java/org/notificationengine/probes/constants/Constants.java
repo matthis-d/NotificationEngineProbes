@@ -6,8 +6,6 @@ public class Constants {
 
     final public static String CHANNELS = "channels";
 
-    final public static String DIRECTORIES = "directories";
-
     final public static String ID = "id";
 
     final public static String TOPIC = "topic";
@@ -47,5 +45,17 @@ public class Constants {
     final public static String DRIVER_CLASS_NAME = "driverClassName";
 
     final public static String QUERIES = "queries";
+
+    final public static String EVENT = "event";
+
+    final public static String EVENTS = "events";
+
+    final public static String FILE_NAME = "fileName";
+
+    final public static String CREATED = "created";
+
+    final public static String MODIFIED = "modified";
+
+    final public static String DELETED = "deleted";
 
 }

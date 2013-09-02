@@ -1,6 +1,7 @@
 package org.notificationengine.probes.probe;
 
 
+import org.json.simple.JSONObject;
 import org.notificationengine.probes.constants.Constants;
 import org.notificationengine.probes.spring.SpringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +10,7 @@ import java.util.Properties;
 
 public abstract class Probe implements IProbe{
 
-    private String notificationMessage;
+    private JSONObject notificationContext;
 
     private String topicName;
 
@@ -23,7 +24,7 @@ public abstract class Probe implements IProbe{
 
         this.serverUrl = (String)localSettingsProperties.get(Constants.SERVER_URL);
 
-        this.notificationMessage = "";
+        this.notificationContext = new JSONObject();
         this.topicName = "";
 
     }
@@ -34,12 +35,12 @@ public abstract class Probe implements IProbe{
     @Override
     public abstract void sendNotification();
 
-    public String getNotificationMessage() {
-        return notificationMessage;
+    public JSONObject getNotificationContext() {
+        return notificationContext;
     }
 
-    public void setNotificationMessage(String notificationMessage) {
-        this.notificationMessage = notificationMessage;
+    public void setNotificationContext(JSONObject notificationContext) {
+        this.notificationContext = notificationContext;
     }
 
     public String getServerUrl() {

@@ -12,6 +12,7 @@ import org.notificationengine.probes.task.ProbeTask;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Timer;
 
@@ -53,10 +54,12 @@ public class Launcher {
 
                     Map<String, Object> folderOptions = channel.getOptions();
 
-                    String directories = (String)folderOptions.get(Constants.DIRECTORIES);
+                    String pathName = (String)folderOptions.get(Constants.PATH);
 
-                    if(directories != null) {
-                        probe = new FolderProbe(topicName, directories);
+                    Collection<String> eventsToWatch = (Collection<String>)folderOptions.get(Constants.EVENTS);
+
+                    if(pathName != null) {
+                        probe = new FolderProbe(topicName, pathName, eventsToWatch);
                     }
                     else {
                         LOGGER.warn("There was no directories set in the configuration, probe has not been instantiated");

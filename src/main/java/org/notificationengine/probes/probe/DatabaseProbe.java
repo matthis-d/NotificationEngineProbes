@@ -123,20 +123,21 @@ public class DatabaseProbe extends Probe{
 
             LOGGER.info("Query " + query + " is executed");
 
-            Collection<String> results = this.jdbcTemplate.query(
+            Collection<JSONObject> results = this.jdbcTemplate.query(
                 query,
                 new Object[]{lastTryTime.toString()},
-                new RowMapper<String>() {
-                    public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+                new RowMapper<JSONObject>() {
+
+                    public JSONObject mapRow(ResultSet rs, int rowNum) throws SQLException {
 
                         ResultSetMetaData rsmd = rs.getMetaData();
                         int columnsNumber = rsmd.getColumnCount();
 
-                        String toRespond = "";
+                        JSONObject toRespond = new JSONObject();
 
                         for (int i = 1; i <= columnsNumber; i++) {
 
-                            toRespond += rs.getObject(i).toString() + " - ";
+                            toRespond.put(rsmd.getColumnName(i), rs.getObject(i).toString());
 
                         }
 
@@ -148,9 +149,9 @@ public class DatabaseProbe extends Probe{
                 }
             );
 
-            for(String result : results) {
+            for(JSONObject result : results) {
 
-                this.setNotificationMessage(result);
+                this.setNotificationContext(result);
 
                 this.sendNotification();
 
@@ -171,11 +172,7 @@ public class DatabaseProbe extends Probe{
 
         JSONObject context = new JSONObject();
 
-        context.put(Constants.SUBJECT, "Change in database");
-
-        context.put(Constants.CONTENT, this.getNotificationMessage());
-
-        rawNotification.put(Constants.CONTEXT, context);
+        rawNotification.put(Constants.CONTEXT, this.getNotificationContext());
 
         String url = this.getServerUrl() + Constants.RAW_NOTIFICATION_SIMPLE_POST_URL;
 

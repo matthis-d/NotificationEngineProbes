@@ -22,119 +22,112 @@ public class FolderProbe extends Probe{
 
     public static Logger LOGGER = Logger.getLogger(FolderProbe.class);
 
-    Collection<Path> pathsToWatch;
+    Path pathToWatch;
+
+    Collection<String> eventsToWatch;
 
     public FolderProbe() {
         super();
-        this.pathsToWatch = new HashSet<>();
+        this.eventsToWatch = new HashSet<>();
     }
 
-    public FolderProbe(String topicName, Collection<Path> pathsToWatch) {
+    public FolderProbe(String topicName, Path pathToWatch, Collection<String> eventsToWatch) {
 
         super();
 
         this.setTopicName(topicName);
-        this.setPathsToWatch(pathsToWatch);
+
+        this.setPathToWatch(pathToWatch);
+
+        this.eventsToWatch = eventsToWatch;
 
         this.listen();
 
     }
 
-    public FolderProbe(String topicName, String pathsToWatchJson) {
+    public FolderProbe(String topicName, String pathName, Collection<String> eventsToWatch) {
 
         super();
 
         LOGGER.info("FolderProbe instantiated with a pathToWatch in JSON format");
 
-        this.pathsToWatch = new HashSet<>();
-
         this.setTopicName(topicName);
-        this.readPathsFromString(pathsToWatchJson);
+
+        this.pathToWatch = Paths.get(pathName);
+
+        this.eventsToWatch = eventsToWatch;
 
         this.listen();
-
-    }
-
-    public void readPathsFromString(String listOfPathsString) {
-
-        LOGGER.debug("readPathsFromString");
-
-        Object listOfPathsObj = JSONValue.parse(listOfPathsString);
-
-        JSONArray listOfPathsJsonObj = (JSONArray)listOfPathsObj;
-
-        for(int i = 0; i<listOfPathsJsonObj.size(); i++) {
-
-            JSONObject path = (JSONObject)listOfPathsJsonObj.get(i);
-
-            String pathName = (String)path.get(Constants.PATH);
-
-            LOGGER.debug("Path found: " + pathName);
-
-            Path pathObject = Paths.get(pathName);
-
-            this.addPathToWatch(pathObject);
-
-        }
 
     }
 
     @Override
     public void listen() {
 
-        for(Path path : this.pathsToWatch) {
-            try {
-                WatchService watcher = path.getFileSystem().newWatchService();
+        try {
+            WatchService watcher = this.pathToWatch.getFileSystem().newWatchService();
 
-                path.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
-                                       StandardWatchEventKinds.ENTRY_DELETE,
-                                       StandardWatchEventKinds.ENTRY_MODIFY);
+            Collection<WatchEvent.Kind<?>> eventsCollection = new HashSet<>();
 
-                while(Boolean.TRUE) {
+            for(String event : eventsToWatch) {
 
-                    WatchKey watchKey = watcher.take();
+                switch(event) {
 
-                    List<WatchEvent<?>> events = watchKey.pollEvents();
-
-                    for (WatchEvent event : events) {
-                        if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
-
-                            this.setNotificationMessage("Created: " + event.context().toString());
-
-                            LOGGER.info("Created: " + event.context().toString());
-
-                            this.sendNotification();
-                        }
-                        if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
-                            this.setNotificationMessage("Delete: " + event.context().toString());
-
-                            LOGGER.info("Delete: " + event.context().toString());
-
-                            this.sendNotification();
-                        }
-                        if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-                            this.setNotificationMessage("Modify: " + event.context().toString());
-
-                            LOGGER.info("Modify: " + event.context().toString());
-
-                            this.sendNotification();
-                        }
-
-                    }
-
-                    //reset the key
-                    boolean valid = watchKey.reset();
-
-                    //exit loop if the key is not valid
-                    //e.g. if the directory was deleted
-                    if (!valid) {
+                    case Constants.CREATED :
+                        eventsCollection.add(StandardWatchEventKinds.ENTRY_CREATE);
                         break;
-                    }
+
+                    case Constants.DELETED :
+                        eventsCollection.add(StandardWatchEventKinds.ENTRY_DELETE);
+                        break;
+
+                    case Constants.MODIFIED :
+                        eventsCollection.add(StandardWatchEventKinds.ENTRY_MODIFY);
+                        break;
+
+                    default:
+                        LOGGER.debug("Unknow event " + event + ", this is ignored");
+
+                }
+            }
+
+            final int nbOfEventsToWatch = eventsCollection.size();
+
+            //Convert in a array to be used by the Path::register method
+            WatchEvent.Kind<?>[] eventsReadyToRegister = eventsCollection.toArray(new WatchEvent.Kind<?>[nbOfEventsToWatch]);
+
+            this.pathToWatch.register(watcher, eventsReadyToRegister);
+
+            while(Boolean.TRUE) {
+
+                WatchKey watchKey = watcher.take();
+
+                List<WatchEvent<?>> events = watchKey.pollEvents();
+
+                for (WatchEvent event : events) {
+
+                    JSONObject context = new JSONObject();
+
+                    context.put(Constants.EVENT, event.kind().toString());
+
+                    context.put(Constants.FILE_NAME, event.context().toString());
+
+                    this.sendNotification();
+
                 }
 
-            } catch (IOException | InterruptedException e) {
-                LOGGER.warn(ExceptionUtils.getFullStackTrace(e));
+                //reset the key
+                boolean valid = watchKey.reset();
+
+                //exit loop if the key is not valid
+                //e.g. if the directory was deleted
+                if (!valid) {
+                    break;
+                }
             }
+
+        } catch (IOException | InterruptedException e) {
+            LOGGER.warn(ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -149,7 +142,7 @@ public class FolderProbe extends Probe{
 
         context.put(Constants.SUBJECT, "Change in folder");
 
-        context.put(Constants.CONTENT, this.getNotificationMessage());
+        context.put(Constants.CONTENT, this.getNotificationContext());
 
         rawNotification.put(Constants.CONTEXT, context);
 
@@ -182,19 +175,27 @@ public class FolderProbe extends Probe{
 
     }
 
-    public Collection<Path> getPathsToWatch() {
-        return pathsToWatch;
+    public Path getPathToWatch() {
+        return pathToWatch;
     }
 
-    public void setPathsToWatch(Collection<Path> pathsToWatch) {
-        this.pathsToWatch = pathsToWatch;
+    public void setPathToWatch(Path pathToWatch) {
+        this.pathToWatch = pathToWatch;
     }
 
-    public void addPathToWatch(Path pathToWatch) {
-        this.pathsToWatch.add(pathToWatch);
+    public Collection<String> getEventsToWatch() {
+        return eventsToWatch;
     }
 
-    public void removePathToWatch(Path pathNotToWatch) {
-        this.pathsToWatch.remove(pathNotToWatch);
+    public void setEventsToWatch(Collection<String> eventsToWatch) {
+        this.eventsToWatch = eventsToWatch;
+    }
+
+    public void addEventToWatch(String eventToWatch) {
+        this.eventsToWatch.add(eventToWatch);
+    }
+
+    public void deleteEventToWatch(String eventNotToWatch) {
+        this.eventsToWatch.remove(eventNotToWatch);
     }
 }
