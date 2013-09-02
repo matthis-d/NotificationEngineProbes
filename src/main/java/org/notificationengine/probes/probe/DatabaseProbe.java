@@ -170,13 +170,15 @@ public class DatabaseProbe extends Probe{
 
         rawNotification.put(Constants.TOPIC, this.getTopicName());
 
-        JSONObject context = new JSONObject();
+        JSONObject context = this.getNotificationContext();
+
+        context.put(Constants.SUBJECT, "Modification in database");
 
         rawNotification.put(Constants.CONTEXT, this.getNotificationContext());
 
         String url = this.getServerUrl() + Constants.RAW_NOTIFICATION_SIMPLE_POST_URL;
 
-        LOGGER.debug(url);
+        LOGGER.info("Notification sent : " + rawNotification.toString());
 
         HttpClient client = new DefaultHttpClient();
 

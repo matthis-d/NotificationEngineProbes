@@ -1,6 +1,8 @@
 package org.notificationengine.probes;
 
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.notificationengine.probes.configuration.Configuration;
 import org.notificationengine.probes.configuration.ConfigurationReader;
 import org.notificationengine.probes.constants.Constants;
@@ -13,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Timer;
 
@@ -56,7 +59,13 @@ public class Launcher {
 
                     String pathName = (String)folderOptions.get(Constants.PATH);
 
-                    Collection<String> eventsToWatch = (Collection<String>)folderOptions.get(Constants.EVENTS);
+                    Collection<String> eventsToWatch = (Collection<String>) JSONValue.parse((String)folderOptions.get(Constants.EVENTS));
+
+                    /*Collection<String> eventsToWatch = new HashSet<>();
+
+                    for(int i = 0; i<eventsToWatchStrings.length; i++) {
+                        eventsToWatch.add(eventsToWatchStrings[i]);
+                    }*/
 
                     if(pathName != null) {
                         probe = new FolderProbe(topicName, pathName, eventsToWatch);

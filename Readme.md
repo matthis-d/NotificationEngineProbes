@@ -104,4 +104,17 @@ If you want to use other databases (others than MySQL), you have to add their dr
 
 First of all, you need to have Java 7 installed on your machine to make it run. 
 
-TODO 
+You have to create ```localsettings.properties```and ```configuration.json``` files and to place it in a folder named ```configuration```. 
+```localsettings.properties``` should look like this : 
+```
+config.directory=/Applications/eclipse/workspace/NotificationEngineProbes/configuration
+server.url=http://localhost:8080/notificationengine-0.0.1-SNAPSHOT/
+```
+The ```config.directory``` property is where the configuration file is and the ```server.url``` property specifies what the url of the notification engine server is.
+
+Once everything is configured, you just have to run : 
+```
+java -jar NotificationEngineProbes-0.0.1-SNAPSHOT.jar -cp .
+```
+where the JAR is the executable archive of the project packaged by Maven. 
+

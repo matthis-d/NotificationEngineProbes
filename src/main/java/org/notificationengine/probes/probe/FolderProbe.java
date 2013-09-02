@@ -112,6 +112,8 @@ public class FolderProbe extends Probe{
 
                     context.put(Constants.FILE_NAME, event.context().toString());
 
+                    this.setNotificationContext(context);
+
                     this.sendNotification();
 
                 }
@@ -138,11 +140,9 @@ public class FolderProbe extends Probe{
 
         rawNotification.put(Constants.TOPIC, this.getTopicName());
 
-        JSONObject context = new JSONObject();
+        JSONObject context = this.getNotificationContext();
 
         context.put(Constants.SUBJECT, "Change in folder");
-
-        context.put(Constants.CONTENT, this.getNotificationContext());
 
         rawNotification.put(Constants.CONTEXT, context);
 
@@ -172,6 +172,8 @@ public class FolderProbe extends Probe{
         finally {
             client.getConnectionManager().shutdown();
         }
+
+        LOGGER.info("Notification sent : " + rawNotification.toString());
 
     }
 
