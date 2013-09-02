@@ -16,8 +16,6 @@ public abstract class Probe implements IProbe{
 
     private String serverUrl;
 
-
-
     public Probe() {
 
         Properties localSettingsProperties = (Properties) SpringUtils.getBean(Constants.LOCAL_SETTINGS_PROPERTIES);
