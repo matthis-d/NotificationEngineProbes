@@ -106,7 +106,7 @@ First of all, you need to have Java 7 installed on your machine to make it run.
 
 You have to create ```localsettings.properties```and ```configuration.json``` files and to place it in a folder named ```configuration```. 
 ```localsettings.properties``` should look like this : 
-```
+```ini
 config.directory=/Applications/eclipse/workspace/NotificationEngineProbes/configuration
 server.url=http://localhost:8080/notificationengine-0.0.1-SNAPSHOT/
 ```
