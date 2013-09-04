@@ -13,7 +13,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.notificationengine.probes.constants.Constants;
 import org.notificationengine.probes.spring.SpringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 

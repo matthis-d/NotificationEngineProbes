@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>NotificationEngineProbes</groupId>
-    <artifactId>NotificationEngineProbes</artifactId>
+    <groupId>com.notificationengine</groupId>
+    <artifactId>probes</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
@@ -114,9 +114,6 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.notificationengine.probes.Launcher</mainClass>
-                                </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
                                 </transformer>
