@@ -162,48 +162,6 @@ public class DatabaseProbe extends Probe{
 
     }
 
-    @Override
-    public void sendNotification() {
-
-        JSONObject rawNotification = new JSONObject();
-
-        rawNotification.put(Constants.TOPIC, this.getTopicName());
-
-        JSONObject context = this.getNotificationContext();
-
-        context.put(Constants.SUBJECT, "Modification in database");
-
-        rawNotification.put(Constants.CONTEXT, this.getNotificationContext());
-
-        String url = this.getServerUrl() + Constants.RAW_NOTIFICATION_SIMPLE_POST_URL;
-
-        LOGGER.info("Notification sent : " + rawNotification.toString());
-
-        HttpClient client = new DefaultHttpClient();
-
-        HttpPost post = new HttpPost(url);
-
-        try {
-            StringEntity params = new StringEntity(rawNotification.toString());
-
-            post.setEntity(params);
-
-            post.addHeader("Content-Type", "application/json");
-
-            HttpResponse response = client.execute(post);
-
-        }
-        catch(Exception ex) {
-
-            LOGGER.error(ExceptionUtils.getFullStackTrace(ex));
-
-        }
-        finally {
-            client.getConnectionManager().shutdown();
-        }
-
-    }
-
     public void setDataSource(DataSource dataSource) {
 
         BasicDataSource configuredDataSource = (BasicDataSource)dataSource;

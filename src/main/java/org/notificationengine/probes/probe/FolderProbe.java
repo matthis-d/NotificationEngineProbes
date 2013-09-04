@@ -133,50 +133,6 @@ public class FolderProbe extends Probe{
         }
     }
 
-    @Override
-    public void sendNotification() {
-
-        JSONObject rawNotification = new JSONObject();
-
-        rawNotification.put(Constants.TOPIC, this.getTopicName());
-
-        JSONObject context = this.getNotificationContext();
-
-        context.put(Constants.SUBJECT, "Change in folder");
-
-        rawNotification.put(Constants.CONTEXT, context);
-
-        String url = this.getServerUrl() + Constants.RAW_NOTIFICATION_SIMPLE_POST_URL;
-
-        LOGGER.debug(url);
-
-        HttpClient client = new DefaultHttpClient();
-
-        HttpPost post = new HttpPost(url);
-
-        try {
-            StringEntity params = new StringEntity(rawNotification.toString());
-
-            post.setEntity(params);
-
-            post.addHeader("Content-Type", "application/json");
-
-            HttpResponse response = client.execute(post);
-
-        }
-        catch(Exception ex) {
-
-            LOGGER.error(ExceptionUtils.getFullStackTrace(ex));
-
-        }
-        finally {
-            client.getConnectionManager().shutdown();
-        }
-
-        LOGGER.info("Notification sent : " + rawNotification.toString());
-
-    }
-
     public Path getPathToWatch() {
         return pathToWatch;
     }
