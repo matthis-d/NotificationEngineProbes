@@ -1,9 +1,7 @@
 package org.notificationengine.probes;
 
 import org.apache.log4j.Logger;
-import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.notificationengine.probes.configuration.Configuration;
 import org.notificationengine.probes.configuration.ConfigurationReader;
 import org.notificationengine.probes.constants.Constants;
 import org.notificationengine.probes.domain.Channel;
@@ -15,7 +13,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Timer;
 
@@ -32,78 +29,63 @@ public class Launcher {
 
         ConfigurationReader configurationReader = context.getBean(Constants.CONFIGURATION_READER, ConfigurationReader.class);
 
-        Configuration configuration = configurationReader.readConfiguration();
+        Channel channel = configurationReader.readConfiguration();
 
         Timer timer = new Timer();
 
-        LOGGER.debug("Number of channels in main : " + configuration.getChannels().size());
+        String topicName = channel.getTopicName();
 
-        for (Channel channel : configuration.getChannels()) {
+        IProbe probe = null;
+        String probeType = null;
 
-            String topicName = channel.getTopicName();
+        LOGGER.debug("Channel with probeType " + channel.getProbeType());
 
-            IProbe probe = null;
-            String probeType = null;
+        switch(channel.getProbeType()) {
 
-            LOGGER.debug("Channel with probeType " + channel.getProbeType());
+            case Constants.PROBE_TYPE_FOLDER :
 
-            switch(channel.getProbeType()) {
+                LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_FOLDER);
 
-                case Constants.PROBE_TYPE_FOLDER :
+                probeType = Constants.PROBE_TYPE_FOLDER;
 
-                    LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_FOLDER);
+                Map<String, Object> folderOptions = channel.getOptions();
 
-                    probeType = Constants.PROBE_TYPE_FOLDER;
+                String pathName = (String)folderOptions.get(Constants.PATH);
 
-                    Map<String, Object> folderOptions = channel.getOptions();
+                Collection<String> eventsToWatch = (Collection<String>) JSONValue.parse((String)folderOptions.get(Constants.EVENTS));
 
-                    String pathName = (String)folderOptions.get(Constants.PATH);
+                if(pathName != null) {
+                    probe = new FolderProbe(topicName, pathName, eventsToWatch);
+                }
+                else {
+                    LOGGER.warn("There was no directories set in the configuration, probe has not been instantiated");
+                }
 
-                    Collection<String> eventsToWatch = (Collection<String>) JSONValue.parse((String)folderOptions.get(Constants.EVENTS));
+                break;
 
-                    /*Collection<String> eventsToWatch = new HashSet<>();
+            case Constants.PROBE_TYPE_DATABASE :
 
-                    for(int i = 0; i<eventsToWatchStrings.length; i++) {
-                        eventsToWatch.add(eventsToWatchStrings[i]);
-                    }*/
+                LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_DATABASE);
 
-                    if(pathName != null) {
-                        probe = new FolderProbe(topicName, pathName, eventsToWatch);
-                    }
-                    else {
-                        LOGGER.warn("There was no directories set in the configuration, probe has not been instantiated");
-                    }
+                probeType = Constants.PROBE_TYPE_DATABASE;
 
-                    break;
+                Map<String, Object> databaseOptions = channel.getOptions();
 
-                case Constants.PROBE_TYPE_DATABASE :
+                probe = new DatabaseProbe(topicName, databaseOptions);
 
-                    LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_DATABASE);
+                break;
 
-                    probeType = Constants.PROBE_TYPE_DATABASE;
+            case Constants.PROBE_TYPE_CUSTOM :
 
-                    Map<String, Object> databaseOptions = channel.getOptions();
+                LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_CUSTOM);
 
-                    probe = new DatabaseProbe(topicName, databaseOptions);
+                break;
 
-                    break;
-
-                case Constants.PROBE_TYPE_CUSTOM :
-
-                    LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_CUSTOM);
-
-                    break;
-
-            }
-
-            if(probeType.equals(Constants.PROBE_TYPE_DATABASE)) {
-
-                LOGGER.debug("There is a scheduled operation");
-
-                timer.schedule(new ProbeTask(probe), 10000, 10000);
-
-            }
         }
+
+        LOGGER.debug("There is a scheduled operation");
+
+        timer.schedule(new ProbeTask(probe), channel.getPeriod(), channel.getPeriod());
 
     }
 

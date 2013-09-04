@@ -1,16 +1,13 @@
 {
-    "channels" : [
-        {
-            "id" : "helpdeskChannel",
-            "topic": "helpdesk.societe1",
-            "probeType" : "databaseProbe",
-            "user": "root",
-            "password" : "root",
-            "url" : "jdbc:mysql://localhost:3306/notification-engine",
-            "driverClassName": "com.mysql.jdbc.Driver",
-            "queries" : [
-                {"getLastUpdates" : "SELECT t.id, t.name, t.message FROM tableToWatch t WHERE t.updated_at > ?"}
-            ]
-        }
+    "id" : "helpdeskChannel",
+    "topic": "helpdesk.societe1",
+    "probeType" : "databaseProbe",
+    "user": "root",
+    "password" : "root",
+    "url" : "jdbc:mysql://localhost:3306/todoapp",
+    "driverClassName": "com.mysql.jdbc.Driver",
+    "queries" : [
+        {"getLastTasks" : "SELECT t.name FROM TASK t WHERE t.created_at > ?"},
+        {"getLastCompletedTasks" : "SELECT t.name FROM COMPLETED_TASK t WHERE t.completed_at > ?"}
     ]
 }

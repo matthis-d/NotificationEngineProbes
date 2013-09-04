@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.notificationengine.probes.constants.Constants;
@@ -29,7 +28,8 @@ public class ConfigurationReader {
 
     private static String[] KNOWN_CHANNEL_KEYS = {Constants.ID,
                                                   Constants.TOPIC,
-                                                  Constants.PROBE_TYPE};
+                                                  Constants.PROBE_TYPE,
+                                                  Constants.PERIOD};
 
     @Value("${config.directory}")
     private String configDirectory;
@@ -40,10 +40,9 @@ public class ConfigurationReader {
         LOGGER.debug("ConfigurationReader instantiated");
     }
 
-    public Configuration readConfiguration() {
+    public Channel readConfiguration() {
 
-        Configuration result = new Configuration();
-
+        Channel result = new Channel();
 
         try {
             LOGGER.info("Reading configuration file...");
@@ -56,83 +55,69 @@ public class ConfigurationReader {
 
             JSONObject configurationJsonObj = (JSONObject)configurationObj;
 
-            JSONArray channelsArray = (JSONArray)configurationJsonObj.get(Constants.CHANNELS);
+            String id = (String)configurationJsonObj.get(Constants.ID);
 
-            LOGGER.debug("Nbr of channels : " + channelsArray.size());
+            if (StringUtils.isEmpty(id)) {
 
-            for (int i = 0; i < channelsArray.size(); i++) {
-
-                JSONObject channelJsonObj = (JSONObject)channelsArray.get(i);
-
-                String id = (String)channelJsonObj.get(Constants.ID);
-
-                if (StringUtils.isEmpty(id)) {
-
-                    LOGGER.warn("Found a channel without id, it will be ignored");
-                    continue;
-                }
-
-                if (result.hasChannelWithId(id)) {
-
-                    LOGGER.warn("Found duplicate channel id [" + id + "], it will be ignored");
-                    continue;
-                }
-
-                String topic = (String)channelJsonObj.get(Constants.TOPIC);
-
-                if (StringUtils.isEmpty(topic)) {
-
-                    LOGGER.warn("Found a channel without topic, it will be ignored");
-                    continue;
-                }
-
-                if (result.hasChannelWithTopic(topic)) {
-
-                    LOGGER.warn("Found multiple channels for same topic [" + topic + "], it will be ignored");
-                    continue;
-                }
-
-                String probeType = (String)channelJsonObj.get(Constants.PROBE_TYPE);
-
-                if (StringUtils.isEmpty(probeType)) {
-
-                    LOGGER.warn("Found a channel without a probeType, it will be ignored");
-                    continue;
-                }
-
-                // if selectorType is not of a known type or custom, ignore channel
-                if (!this.isKnownProbeType(probeType)) {
-
-                    LOGGER.warn("Found a channel with an unknown selectorType [" + probeType + "], it will be ignored");
-                    continue;
-                }
-
-
-
-                Channel channel = new Channel(id);
-                channel.setTopicName(topic);
-                channel.setProbeType(probeType);
-
-                Set<String> keys = channelJsonObj.keySet();
-                for (String key : keys) {
-
-                    if (this.isChannelOption(key)) {
-
-                        String value = channelJsonObj.get(key).toString();
-
-                        LOGGER.debug("Found option " + key + " : " + value);
-
-                        channel.addOption(key, value);
-                    }
-                }
-
-
-                LOGGER.debug("Found channel : " + channel);
-
-                result.addChannel(channel);
+                LOGGER.warn("Found a channel without id, it will be ignored");
             }
 
-            LOGGER.info("Configuration file read.");
+            String topic = (String)configurationJsonObj.get(Constants.TOPIC);
+
+            if (StringUtils.isEmpty(topic)) {
+
+                LOGGER.warn("There is no topic, it will be ignored");
+            }
+
+            String probeType = (String)configurationJsonObj.get(Constants.PROBE_TYPE);
+
+            if (StringUtils.isEmpty(probeType)) {
+
+                LOGGER.warn("Found a channel without a probeType, it will be ignored");
+            }
+
+            // if selectorType is not of a known type or custom, ignore channel
+            if (!this.isKnownProbeType(probeType)) {
+
+                LOGGER.warn("Found a channel with an unknown selectorType [" + probeType + "], it will be ignored");
+            }
+
+            Integer period = (Integer)configurationJsonObj.get(Constants.PERIOD);
+
+            if(period == null) {
+                LOGGER.info("No period information found, set to default period");
+
+                period = Constants.DEFAULT_PERIOD;
+            }
+
+            if(period == 0) {
+
+                LOGGER.warn("Found a period of 0ms, will be set to default period");
+
+                period = Constants.DEFAULT_PERIOD;
+            }
+
+            result.setId(id);
+            result.setTopicName(topic);
+            result.setProbeType(probeType);
+            result.setPeriod(period);
+
+            Set<String> keys = configurationJsonObj.keySet();
+            for (String key : keys) {
+
+                if (this.isChannelOption(key)) {
+
+                    String value = configurationJsonObj.get(key).toString();
+
+                    LOGGER.debug("Found option " + key + " : " + value);
+
+                    result.addOption(key, value);
+                }
+            }
+
+
+            LOGGER.debug("Found channel : " + result);
+
         }
         catch (IOException e) {
 

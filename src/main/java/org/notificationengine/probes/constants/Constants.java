@@ -4,11 +4,11 @@ public class Constants {
 
     final public static String CONFIGURATION_FILE_NAME = "configuration.json";
 
-    final public static String CHANNELS = "channels";
-
     final public static String ID = "id";
 
     final public static String TOPIC = "topic";
+
+    final public static String PERIOD = "period";
 
     final public static String PATH = "path";
 
@@ -57,5 +57,7 @@ public class Constants {
     final public static String MODIFIED = "modified";
 
     final public static String DELETED = "deleted";
+
+    final public static Integer DEFAULT_PERIOD = 5000;
 
 }

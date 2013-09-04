@@ -12,7 +12,14 @@ public class Channel {
 
     private String probeType;
 
+    private Integer period;
+
     private Map<String, Object> options;
+
+    public Channel() {
+        super();
+        this.options = new HashMap<>();
+    }
 
     public Channel(String id) {
 
@@ -48,6 +55,14 @@ public class Channel {
         this.probeType = probeType;
     }
 
+    public Integer getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(Integer period) {
+        this.period = period;
+    }
+
     public Map<String, Object> getOptions() {
         return options;
     }
@@ -66,12 +81,14 @@ public class Channel {
 
     @Override
     public String toString() {
-        return "Channel{" +
-                "id='" + id + '\'' +
-                ", topicName='" + topicName + '\'' +
-                ", probeType='" + probeType + '\'' +
-                ", options=" + options +
-                '}';
+        final StringBuilder sb = new StringBuilder("Channel{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", topicName='").append(topicName).append('\'');
+        sb.append(", probeType='").append(probeType).append('\'');
+        sb.append(", period=").append(period);
+        sb.append(", options=").append(options);
+        sb.append('}');
+        return sb.toString();
     }
 
     @Override
@@ -82,9 +99,9 @@ public class Channel {
         Channel channel = (Channel) o;
 
         if (!id.equals(channel.id)) return false;
+        if (options != null ? !options.equals(channel.options) : channel.options != null) return false;
+        if (period != null ? !period.equals(channel.period) : channel.period != null) return false;
         if (!probeType.equals(channel.probeType)) return false;
-        if (options != null ? !options.equals(channel.options) : channel.options != null)
-            return false;
         if (!topicName.equals(channel.topicName)) return false;
 
         return true;
@@ -95,6 +112,7 @@ public class Channel {
         int result = id.hashCode();
         result = 31 * result + topicName.hashCode();
         result = 31 * result + probeType.hashCode();
+        result = 31 * result + (period != null ? period.hashCode() : 0);
         result = 31 * result + (options != null ? options.hashCode() : 0);
         return result;
     }
