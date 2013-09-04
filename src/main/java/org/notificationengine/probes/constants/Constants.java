@@ -24,13 +24,9 @@ public class Constants {
 
     final public static String RAW_NOTIFICATION_SIMPLE_POST_URL = "rawNotification.do";
 
-    final public static String RAW_NOTIFICATION_FORM_DATA_POST_URL = "rawNotificationWithAttachment.do";
-
     final public static String CONTEXT = "context";
 
     final public static String SUBJECT = "subject";
-
-    final public static String CONTENT = "content";
 
     final public static String LOCAL_SETTINGS_PROPERTIES = "localSettingsProperties";
 
@@ -46,18 +42,10 @@ public class Constants {
 
     final public static String QUERIES = "queries";
 
-    final public static String EVENT = "event";
-
-    final public static String EVENTS = "events";
-
     final public static String FILE_NAME = "fileName";
 
-    final public static String CREATED = "created";
-
-    final public static String MODIFIED = "modified";
-
-    final public static String DELETED = "deleted";
-
     final public static Integer DEFAULT_PERIOD = 5000;
+
+    final public static String LAST_MODIFIED = "lastModified";
 
 }

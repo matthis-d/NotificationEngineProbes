@@ -50,16 +50,7 @@ public class Launcher {
 
                 Map<String, Object> folderOptions = channel.getOptions();
 
-                String pathName = (String)folderOptions.get(Constants.PATH);
-
-                Collection<String> eventsToWatch = (Collection<String>) JSONValue.parse((String)folderOptions.get(Constants.EVENTS));
-
-                if(pathName != null) {
-                    probe = new FolderProbe(topicName, pathName, eventsToWatch);
-                }
-                else {
-                    LOGGER.warn("There was no directories set in the configuration, probe has not been instantiated");
-                }
+                probe = new FolderProbe(topicName, folderOptions);
 
                 break;
 

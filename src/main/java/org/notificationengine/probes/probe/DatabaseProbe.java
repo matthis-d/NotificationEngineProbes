@@ -39,14 +39,12 @@ public class DatabaseProbe extends Probe{
 
     private JdbcTemplate jdbcTemplate;
 
-    private Timestamp lastTryTime;
-
     public DatabaseProbe() {
 
         super();
         this.queries = new HashSet<>();
 
-        this.lastTryTime = new Timestamp(new Date().getTime());
+        this.setLastTryTime(new Timestamp(new Date().getTime()));
 
         DataSource dataSource = (DataSource) SpringUtils.getBean("dataSource");
 
@@ -63,7 +61,7 @@ public class DatabaseProbe extends Probe{
         this.driverClassName = driverClassName;
         this.queries = queries;
 
-        this.lastTryTime = new Timestamp(new Date().getTime());
+        this.setLastTryTime(new Timestamp(new Date().getTime()));
 
         DataSource dataSource = (DataSource) SpringUtils.getBean("dataSource");
 
@@ -82,7 +80,7 @@ public class DatabaseProbe extends Probe{
         this.url = (String) options.get(Constants.DATABASE_URL);
         this.driverClassName = (String) options.get(Constants.DRIVER_CLASS_NAME);
 
-        this.lastTryTime = new Timestamp(new Date().getTime());
+        this.setLastTryTime(new Timestamp(new Date().getTime()));
 
         this.queries = new HashSet<>();
 
@@ -124,7 +122,7 @@ public class DatabaseProbe extends Probe{
 
             Collection<JSONObject> results = this.jdbcTemplate.query(
                 query,
-                new Object[]{lastTryTime.toString()},
+                new Object[]{this.getLastTryTime().toString()},
                 new RowMapper<JSONObject>() {
 
                     public JSONObject mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -158,7 +156,7 @@ public class DatabaseProbe extends Probe{
 
         }
 
-        this.lastTryTime = time;
+        this.setLastTryTime(time);
 
     }
 
@@ -220,13 +218,5 @@ public class DatabaseProbe extends Probe{
 
     public void setDriverClassName(String driverClassName) {
         this.driverClassName = driverClassName;
-    }
-
-    public Timestamp getLastTryTime() {
-        return lastTryTime;
-    }
-
-    public void setLastTryTime(Timestamp lastTryTime) {
-        this.lastTryTime = lastTryTime;
     }
 }

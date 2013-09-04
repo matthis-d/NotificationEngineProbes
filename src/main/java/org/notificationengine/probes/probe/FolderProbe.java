@@ -1,37 +1,28 @@
 package org.notificationengine.probes.probe;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.notificationengine.probes.constants.Constants;
+import org.springframework.util.StringUtils;
 
-import java.io.IOException;
+import java.io.File;
 import java.nio.file.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Map;
 
 public class FolderProbe extends Probe{
 
     public static Logger LOGGER = Logger.getLogger(FolderProbe.class);
 
-    Path pathToWatch;
+    File pathToWatch;
 
-    Collection<String> eventsToWatch;
 
     public FolderProbe() {
         super();
-        this.eventsToWatch = new HashSet<>();
     }
 
-    public FolderProbe(String topicName, Path pathToWatch, Collection<String> eventsToWatch) {
+    public FolderProbe(String topicName, File pathToWatch) {
 
         super();
 
@@ -39,121 +30,77 @@ public class FolderProbe extends Probe{
 
         this.setPathToWatch(pathToWatch);
 
-        this.eventsToWatch = eventsToWatch;
+        this.setLastTryTime(new Timestamp(new Date().getTime()));
 
         this.listen();
 
     }
 
-    public FolderProbe(String topicName, String pathName, Collection<String> eventsToWatch) {
+    public FolderProbe(String topicName, Map<String, Object> options) {
 
         super();
 
-        LOGGER.info("FolderProbe instantiated with a pathToWatch in JSON format");
+        LOGGER.info("FolderProbe instantiated with options");
 
         this.setTopicName(topicName);
 
-        this.pathToWatch = Paths.get(pathName);
+        this.getAndSetPathFromOptions(options);
 
-        this.eventsToWatch = eventsToWatch;
+        this.setNotificationSubject((String) options.get(Constants.SUBJECT));
+
+        this.setLastTryTime(new Timestamp(new Date().getTime()));
 
         this.listen();
+
+    }
+
+    public void getAndSetPathFromOptions(Map<String, Object> options) {
+
+        String pathName = (String) options.get(Constants.PATH);
+
+        if(pathName != null && !StringUtils.isEmpty(pathName)) {
+
+            this.pathToWatch = new File(pathName);
+        }
+        else {
+            LOGGER.warn("The path is not valid");
+        }
 
     }
 
     @Override
     public void listen() {
 
-        try {
-            WatchService watcher = this.pathToWatch.getFileSystem().newWatchService();
+        Timestamp time = new Timestamp(new Date().getTime());
 
-            Collection<WatchEvent.Kind<?>> eventsCollection = new HashSet<>();
+        for (File fileEntry : pathToWatch.listFiles()) {
 
-            for(String event : eventsToWatch) {
+            Timestamp lastModified = new Timestamp(fileEntry.lastModified());
 
-                switch(event) {
+            if(lastModified.after(this.getLastTryTime())) {
 
-                    case Constants.CREATED :
-                        eventsCollection.add(StandardWatchEventKinds.ENTRY_CREATE);
-                        break;
+                JSONObject context = new JSONObject();
 
-                    case Constants.DELETED :
-                        eventsCollection.add(StandardWatchEventKinds.ENTRY_DELETE);
-                        break;
+                context.put(Constants.FILE_NAME, fileEntry.getName());
 
-                    case Constants.MODIFIED :
-                        eventsCollection.add(StandardWatchEventKinds.ENTRY_MODIFY);
-                        break;
+                context.put(Constants.LAST_MODIFIED, fileEntry.lastModified());
 
-                    default:
-                        LOGGER.debug("Unknow event " + event + ", this is ignored");
+                this.setNotificationContext(context);
 
-                }
+                this.sendNotification();
+
             }
-
-            final int nbOfEventsToWatch = eventsCollection.size();
-
-            //Convert in a array to be used by the Path::register method
-            WatchEvent.Kind<?>[] eventsReadyToRegister = eventsCollection.toArray(new WatchEvent.Kind<?>[nbOfEventsToWatch]);
-
-            this.pathToWatch.register(watcher, eventsReadyToRegister);
-
-            while(Boolean.TRUE) {
-
-                WatchKey watchKey = watcher.take();
-
-                List<WatchEvent<?>> events = watchKey.pollEvents();
-
-                for (WatchEvent event : events) {
-
-                    JSONObject context = new JSONObject();
-
-                    context.put(Constants.EVENT, event.kind().toString());
-
-                    context.put(Constants.FILE_NAME, event.context().toString());
-
-                    this.setNotificationContext(context);
-
-                    this.sendNotification();
-
-                }
-
-                //reset the key
-                boolean valid = watchKey.reset();
-
-                //exit loop if the key is not valid
-                //e.g. if the directory was deleted
-                if (!valid) {
-                    break;
-                }
-            }
-
-        } catch (IOException | InterruptedException e) {
-            LOGGER.warn(ExceptionUtils.getFullStackTrace(e));
         }
+
+        this.setLastTryTime(time);
+
     }
 
-    public Path getPathToWatch() {
+    public File getPathToWatch() {
         return pathToWatch;
     }
 
-    public void setPathToWatch(Path pathToWatch) {
+    public void setPathToWatch(File pathToWatch) {
         this.pathToWatch = pathToWatch;
-    }
-
-    public Collection<String> getEventsToWatch() {
-        return eventsToWatch;
-    }
-
-    public void setEventsToWatch(Collection<String> eventsToWatch) {
-        this.eventsToWatch = eventsToWatch;
-    }
-
-    public void addEventToWatch(String eventToWatch) {
-        this.eventsToWatch.add(eventToWatch);
-    }
-
-    public void deleteEventToWatch(String eventNotToWatch) {
-        this.eventsToWatch.remove(eventNotToWatch);
     }
 }

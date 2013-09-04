@@ -1,6 +1,5 @@
 package org.notificationengine.probes.probe;
 
-
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,6 +12,7 @@ import org.notificationengine.probes.constants.Constants;
 import org.notificationengine.probes.spring.SpringUtils;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.sql.Timestamp;
 import java.util.Properties;
 
 public abstract class Probe implements IProbe{
@@ -26,6 +26,8 @@ public abstract class Probe implements IProbe{
     private String topicName;
 
     private String serverUrl;
+
+    private Timestamp lastTryTime;
 
     public Probe() {
 
@@ -51,7 +53,7 @@ public abstract class Probe implements IProbe{
 
         JSONObject context = this.getNotificationContext();
 
-        context.put(Constants.SUBJECT, this.getTopicName());
+        context.put(Constants.SUBJECT, this.getNotificationSubject());
 
         rawNotification.put(Constants.CONTEXT, context);
 
@@ -116,5 +118,13 @@ public abstract class Probe implements IProbe{
 
     public void setNotificationSubject(String notificationSubject) {
         this.notificationSubject = notificationSubject;
+    }
+
+    public Timestamp getLastTryTime() {
+        return lastTryTime;
+    }
+
+    public void setLastTryTime(Timestamp lastTryTime) {
+        this.lastTryTime = lastTryTime;
     }
 }
