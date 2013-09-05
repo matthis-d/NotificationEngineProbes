@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.notificationengine.probes.constants.Constants;
-import org.notificationengine.probes.domain.Channel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -26,7 +25,7 @@ public class ConfigurationReader {
                                                  Constants.PROBE_TYPE_DATABASE,
                                                  Constants.PROBE_TYPE_CUSTOM};
 
-    private static String[] KNOWN_CHANNEL_KEYS = {Constants.ID,
+    private static String[] KNOWN_CONFIGURATION_KEYS = {Constants.ID,
                                                   Constants.TOPIC,
                                                   Constants.PROBE_TYPE,
                                                   Constants.PERIOD};
@@ -40,9 +39,9 @@ public class ConfigurationReader {
         LOGGER.debug("ConfigurationReader instantiated");
     }
 
-    public Channel readConfiguration() {
+    public Configuration readConfiguration() {
 
-        Channel result = new Channel();
+        Configuration result = new Configuration();
 
         try {
             LOGGER.info("Reading configuration file...");
@@ -59,7 +58,7 @@ public class ConfigurationReader {
 
             if (StringUtils.isEmpty(id)) {
 
-                LOGGER.warn("Found a channel without id, it will be ignored");
+                LOGGER.warn("Found a configuration without id, it will be ignored");
             }
 
             String topic = (String)configurationJsonObj.get(Constants.TOPIC);
@@ -73,13 +72,13 @@ public class ConfigurationReader {
 
             if (StringUtils.isEmpty(probeType)) {
 
-                LOGGER.warn("Found a channel without a probeType, it will be ignored");
+                LOGGER.warn("Found a configuration without a probeType, it will be ignored");
             }
 
-            // if selectorType is not of a known type or custom, ignore channel
+            // if probeType is not of a known type or custom, ignore configuration
             if (!this.isKnownProbeType(probeType)) {
 
-                LOGGER.warn("Found a channel with an unknown selectorType [" + probeType + "], it will be ignored");
+                LOGGER.warn("Found a configuration with an unknown probeType [" + probeType + "], it will be ignored");
             }
 
             Integer period = (Integer)configurationJsonObj.get(Constants.PERIOD);
@@ -92,7 +91,7 @@ public class ConfigurationReader {
 
             if(period == 0) {
 
-                LOGGER.warn("Found a period of 0ms, will be set to default period");
+                LOGGER.warn("Found a period of 0 ms, will be set to default period");
 
                 period = Constants.DEFAULT_PERIOD;
             }
@@ -105,7 +104,7 @@ public class ConfigurationReader {
             Set<String> keys = configurationJsonObj.keySet();
             for (String key : keys) {
 
-                if (this.isChannelOption(key)) {
+                if (this.isKnownConfigurationOption(key)) {
 
                     String value = configurationJsonObj.get(key).toString();
 
@@ -116,7 +115,7 @@ public class ConfigurationReader {
             }
 
 
-            LOGGER.debug("Found channel : " + result);
+            LOGGER.debug("Found configuration : " + result);
 
         }
         catch (IOException e) {
@@ -129,9 +128,9 @@ public class ConfigurationReader {
         return result;
     }
 
-    private boolean isChannelOption(String key) {
+    private boolean isKnownConfigurationOption(String key) {
 
-        return (!ArrayUtils.contains(KNOWN_CHANNEL_KEYS, key));
+        return (!ArrayUtils.contains(KNOWN_CONFIGURATION_KEYS, key));
     }
 
     private boolean isKnownProbeType(String probeType) {

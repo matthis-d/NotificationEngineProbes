@@ -24,11 +24,11 @@ public class ProbeTask extends TimerTask{
     @Override
     public void run() {
 
-        LOGGER.info("Launching Notificator Task : " + probe.getClass().getName());
+        LOGGER.info("Launching ProbeTask : " + probe.getClass().getName());
 
         this.probe.listen();
 
-        LOGGER.info("Notificator Task has finished : " + probe.getClass().getName());
+        LOGGER.info("ProbeTask has finished : " + probe.getClass().getName());
 
     }
 }

@@ -2,9 +2,9 @@ package org.notificationengine.probes;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
+import org.notificationengine.probes.configuration.Configuration;
 import org.notificationengine.probes.configuration.ConfigurationReader;
 import org.notificationengine.probes.constants.Constants;
-import org.notificationengine.probes.domain.Channel;
 import org.notificationengine.probes.probe.DatabaseProbe;
 import org.notificationengine.probes.probe.FolderProbe;
 import org.notificationengine.probes.probe.IProbe;
@@ -29,26 +29,23 @@ public class Launcher {
 
         ConfigurationReader configurationReader = context.getBean(Constants.CONFIGURATION_READER, ConfigurationReader.class);
 
-        Channel channel = configurationReader.readConfiguration();
+        Configuration configuration = configurationReader.readConfiguration();
 
         Timer timer = new Timer();
 
-        String topicName = channel.getTopicName();
+        String topicName = configuration.getTopicName();
 
         IProbe probe = null;
-        String probeType = null;
 
-        LOGGER.debug("Channel with probeType " + channel.getProbeType());
+        LOGGER.debug("Configuration with probeType " + configuration.getProbeType());
 
-        switch(channel.getProbeType()) {
+        switch(configuration.getProbeType()) {
 
             case Constants.PROBE_TYPE_FOLDER :
 
                 LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_FOLDER);
 
-                probeType = Constants.PROBE_TYPE_FOLDER;
-
-                Map<String, Object> folderOptions = channel.getOptions();
+                Map<String, Object> folderOptions = configuration.getOptions();
 
                 probe = new FolderProbe(topicName, folderOptions);
 
@@ -58,9 +55,7 @@ public class Launcher {
 
                 LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_DATABASE);
 
-                probeType = Constants.PROBE_TYPE_DATABASE;
-
-                Map<String, Object> databaseOptions = channel.getOptions();
+                Map<String, Object> databaseOptions = configuration.getOptions();
 
                 probe = new DatabaseProbe(topicName, databaseOptions);
 
@@ -76,7 +71,7 @@ public class Launcher {
 
         LOGGER.debug("There is a scheduled operation");
 
-        timer.schedule(new ProbeTask(probe), channel.getPeriod(), channel.getPeriod());
+        timer.schedule(new ProbeTask(probe), configuration.getPeriod(), configuration.getPeriod());
 
     }
 

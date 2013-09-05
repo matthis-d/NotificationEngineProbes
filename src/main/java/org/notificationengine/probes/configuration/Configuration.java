@@ -1,10 +1,9 @@
-package org.notificationengine.probes.domain;
+package org.notificationengine.probes.configuration;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Channel {
+public class Configuration {
 
     private String id;
 
@@ -16,12 +15,12 @@ public class Channel {
 
     private Map<String, Object> options;
 
-    public Channel() {
+    public Configuration() {
         super();
         this.options = new HashMap<>();
     }
 
-    public Channel(String id) {
+    public Configuration(String id) {
 
         super();
 
@@ -81,7 +80,7 @@ public class Channel {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Channel{");
+        final StringBuilder sb = new StringBuilder("Configuration{");
         sb.append("id='").append(id).append('\'');
         sb.append(", topicName='").append(topicName).append('\'');
         sb.append(", probeType='").append(probeType).append('\'');
@@ -96,13 +95,13 @@ public class Channel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Channel channel = (Channel) o;
+        Configuration configuration = (Configuration) o;
 
-        if (!id.equals(channel.id)) return false;
-        if (options != null ? !options.equals(channel.options) : channel.options != null) return false;
-        if (period != null ? !period.equals(channel.period) : channel.period != null) return false;
-        if (!probeType.equals(channel.probeType)) return false;
-        if (!topicName.equals(channel.topicName)) return false;
+        if (!id.equals(configuration.id)) return false;
+        if (options != null ? !options.equals(configuration.options) : configuration.options != null) return false;
+        if (period != null ? !period.equals(configuration.period) : configuration.period != null) return false;
+        if (!probeType.equals(configuration.probeType)) return false;
+        if (!topicName.equals(configuration.topicName)) return false;
 
         return true;
     }

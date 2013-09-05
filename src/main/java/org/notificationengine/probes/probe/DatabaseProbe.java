@@ -39,35 +39,6 @@ public class DatabaseProbe extends Probe{
 
     private JdbcTemplate jdbcTemplate;
 
-    public DatabaseProbe() {
-
-        super();
-        this.queries = new HashSet<>();
-
-        this.setLastTryTime(new Timestamp(new Date().getTime()));
-
-        DataSource dataSource = (DataSource) SpringUtils.getBean("dataSource");
-
-        this.setDataSource(dataSource);
-
-    }
-
-    public DatabaseProbe(String user, String password, String url, String driverClassName, Collection<String> queries) {
-
-        super();
-        this.user = user;
-        this.password = password;
-        this.url = url;
-        this.driverClassName = driverClassName;
-        this.queries = queries;
-
-        this.setLastTryTime(new Timestamp(new Date().getTime()));
-
-        DataSource dataSource = (DataSource) SpringUtils.getBean("dataSource");
-
-        this.setDataSource(dataSource);
-
-    }
 
     public DatabaseProbe(String topicName, Map<String, Object> options) {
 

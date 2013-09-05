@@ -10,7 +10,7 @@ public class Constants {
 
     final public static String PERIOD = "period";
 
-    final public static String PATH = "path";
+    final public static String PATHS = "paths";
 
     final public static String PROBE_TYPE = "probeType";
 
