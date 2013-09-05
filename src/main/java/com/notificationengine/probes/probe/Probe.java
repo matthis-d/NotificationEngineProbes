@@ -76,18 +76,17 @@ public abstract class Probe implements IProbe{
 
             HttpResponse response = client.execute(post);
 
+            LOGGER.info("Notification sent : " + rawNotification.toString());
         }
         catch(Exception ex) {
 
             LOGGER.error(ExceptionUtils.getFullStackTrace(ex));
-
+            
+            LOGGER.info("Notification not sent : " + rawNotification.toString());
         }
         finally {
             client.getConnectionManager().shutdown();
         }
-
-        LOGGER.info("Notification sent : " + rawNotification.toString());
-
     }
 
     public JSONObject getNotificationContext() {

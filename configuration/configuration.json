@@ -3,5 +3,5 @@
     "topic": "facturation.societe2",
     "subject" : "File modified",
     "probeType": "folderProbe",
-    "path": "/Users/Matthis/Desktop"
+    "paths": ["D:/temp/notificationengine/path1", "D:/temp/notificationengine/path2"]
 }

@@ -1,3 +1,6 @@
 .idea/
 NotificationEngineProbes.iml
 target/
+.classpath
+.project
+.settings/

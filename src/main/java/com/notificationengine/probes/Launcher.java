@@ -4,7 +4,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import com.notificationengine.probes.configuration.ConfigurationReader;
 import com.notificationengine.probes.constants.Constants;
-import com.notificationengine.probes.domain.Channel;
+import com.notificationengine.probes.configuration.Configuration;
 import com.notificationengine.probes.probe.DatabaseProbe;
 import com.notificationengine.probes.probe.FolderProbe;
 import com.notificationengine.probes.probe.IProbe;
@@ -46,26 +46,24 @@ public class Launcher {
 
         ConfigurationReader configurationReader = context.getBean(Constants.CONFIGURATION_READER, ConfigurationReader.class);
 
-        Channel channel = configurationReader.readConfiguration();
+        Configuration configuration = configurationReader.readConfiguration();
 
         Timer timer = new Timer();
 
-        String topicName = channel.getTopicName();
+        String topicName = configuration.getTopicName();
 
         IProbe probe = null;
         String probeType = null;
 
-        LOGGER.debug("Channel with probeType " + channel.getProbeType());
+        LOGGER.debug("Configuration with probeType " + configuration.getProbeType());
 
-        switch(channel.getProbeType()) {
+        switch(configuration.getProbeType()) {
 
             case Constants.PROBE_TYPE_FOLDER :
 
                 LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_FOLDER);
 
-                probeType = Constants.PROBE_TYPE_FOLDER;
-
-                Map<String, Object> folderOptions = channel.getOptions();
+                Map<String, Object> folderOptions = configuration.getOptions();
 
                 probe = new FolderProbe(topicName, folderOptions);
 
@@ -75,9 +73,7 @@ public class Launcher {
 
                 LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_DATABASE);
 
-                probeType = Constants.PROBE_TYPE_DATABASE;
-
-                Map<String, Object> databaseOptions = channel.getOptions();
+                Map<String, Object> databaseOptions = configuration.getOptions();
 
                 probe = new DatabaseProbe(topicName, databaseOptions);
 
@@ -88,7 +84,7 @@ public class Launcher {
                 LOGGER.debug("Detected Probe of type " + Constants.PROBE_TYPE_CUSTOM);
 
                 // get selector class
-                String probeClass = (String) channel.getOption(Constants.PROBE_CLASS);
+                String probeClass = (String) configuration.getOption(Constants.PROBE_CLASS);
 
                 LOGGER.debug("Detected probe class " + probeClass);
 
@@ -100,7 +96,7 @@ public class Launcher {
 
                     Constructor constructor = clazz.getConstructor(String.class, Map.class);
 
-                    probe = (IProbe)constructor.newInstance(channel.getTopicName(), channel.getOptions());
+                    probe = (IProbe)constructor.newInstance(configuration.getTopicName(), configuration.getOptions());
 
                 }
                 catch(InstantiationException | ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
@@ -117,7 +113,7 @@ public class Launcher {
 
         LOGGER.debug("There is a scheduled operation");
 
-        timer.schedule(new ProbeTask(probe), channel.getPeriod(), channel.getPeriod());
+        timer.schedule(new ProbeTask(probe), configuration.getPeriod(), configuration.getPeriod());
 
     }
 
