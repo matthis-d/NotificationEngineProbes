@@ -1,4 +1,4 @@
-package org.notificationengine.probes.spring;
+package com.notificationengine.probes.spring;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

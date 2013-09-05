@@ -1,4 +1,4 @@
-package org.notificationengine.probes.configuration;
+package com.notificationengine.probes.configuration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,6 +76,10 @@ public class Configuration {
 
     public void removeOption(String key) {
         this.options.remove(key);
+    }
+
+    public Object getOption(String key) {
+        return this.options.get(key);
     }
 
     @Override

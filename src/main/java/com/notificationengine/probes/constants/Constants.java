@@ -1,4 +1,4 @@
-package org.notificationengine.probes.constants;
+package com.notificationengine.probes.constants;
 
 public class Constants {
 
@@ -19,6 +19,8 @@ public class Constants {
     final public static String PROBE_TYPE_DATABASE = "databaseProbe";
 
     final public static String PROBE_TYPE_CUSTOM = "customProbe";
+
+    final public static String PROBE_CLASS = "probeClass";
 
     final public static String CONFIGURATION_READER = "configurationReader";
 

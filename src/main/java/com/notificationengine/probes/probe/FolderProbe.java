@@ -1,10 +1,10 @@
-package org.notificationengine.probes.probe;
+package com.notificationengine.probes.probe;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import com.notificationengine.probes.constants.Constants;
 import org.json.simple.JSONValue;
-import org.notificationengine.probes.constants.Constants;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -39,8 +39,6 @@ public class FolderProbe extends Probe{
         this.getAndSetPathsFromOptions(options);
 
         this.setNotificationSubject((String) options.get(Constants.SUBJECT));
-
-        this.setLastTryTime(new Timestamp(new Date().getTime()));
 
         this.listen();
 

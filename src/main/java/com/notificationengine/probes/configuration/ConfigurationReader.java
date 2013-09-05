@@ -1,4 +1,4 @@
-package org.notificationengine.probes.configuration;
+package com.notificationengine.probes.configuration;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -6,7 +6,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.notificationengine.probes.constants.Constants;
+import com.notificationengine.probes.constants.Constants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;

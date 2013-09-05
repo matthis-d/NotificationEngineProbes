@@ -1,4 +1,4 @@
-package org.notificationengine.probes.probe;
+package com.notificationengine.probes.probe;
 
 
 public interface IProbe {

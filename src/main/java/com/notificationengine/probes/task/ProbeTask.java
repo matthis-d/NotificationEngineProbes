@@ -1,8 +1,8 @@
-package org.notificationengine.probes.task;
+package com.notificationengine.probes.task;
 
 
 import org.apache.log4j.Logger;
-import org.notificationengine.probes.probe.IProbe;
+import com.notificationengine.probes.probe.IProbe;
 
 import java.util.TimerTask;
 
