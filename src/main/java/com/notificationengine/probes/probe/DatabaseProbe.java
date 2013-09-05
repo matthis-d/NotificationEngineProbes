@@ -1,6 +1,8 @@
 package com.notificationengine.probes.probe;
 
+import com.notificationengine.probes.utils.Template;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -71,6 +73,8 @@ public class DatabaseProbe extends Probe{
         DataSource dataSource = (DataSource) SpringUtils.getBean("dataSource");
 
         this.setDataSource(dataSource);
+
+        this.setNotificationSubject((String) options.get(Constants.SUBJECT));
 
     }
 
@@ -183,5 +187,25 @@ public class DatabaseProbe extends Probe{
 
     public void setDriverClassName(String driverClassName) {
         this.driverClassName = driverClassName;
+    }
+
+    @Override
+    public String getNotificationSubject() {
+        String subjectTemplate = super.getNotificationSubject();
+
+        HashMap<String, String> variables = new HashMap<>();
+
+        Collection<String> keys = this.getNotificationContext().keySet();
+
+        for(String key : keys) {
+
+            variables.put(key, (String) this.getNotificationContext().get(key));
+
+        }
+
+        subjectTemplate = Template.evaluateTemplate(subjectTemplate, variables);
+
+        return subjectTemplate;
+
     }
 }

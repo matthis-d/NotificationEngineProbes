@@ -1,7 +1,13 @@
 {
-    "id": "facturationChannel",
-    "topic": "facturation.societe2",
-    "subject" : "File modified",
-    "probeType": "folderProbe",
-    "paths": ["D:/temp/notificationengine/path1", "D:/temp/notificationengine/path2"]
+    "id" : "helpdeskChannel",
+    "topic": "helpdesk.societe1",
+    "probeType" : "databaseProbe",
+    "user": "root",
+    "password" : "root",
+    "subject": "${name} was created or modified",
+    "url" : "jdbc:mysql://localhost:3306/notification-engine",
+    "driverClassName": "com.mysql.jdbc.Driver",
+    "queries" : [
+        {"getLastUpdates" : "SELECT t.id, t.name, t.message FROM tableToWatch t WHERE t.updated_at > ?"}
+    ]
 }
