@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import com.notificationengine.probes.constants.Constants;
-import com.notificationengine.probes.domain.Channel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
