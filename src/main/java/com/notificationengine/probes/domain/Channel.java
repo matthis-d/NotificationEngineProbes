@@ -1,6 +1,5 @@
-package org.notificationengine.probes.domain;
+package com.notificationengine.probes.domain;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,6 +76,10 @@ public class Channel {
 
     public void removeOption(String key) {
         this.options.remove(key);
+    }
+
+    public Object getOption(String key) {
+        return this.options.get(key);
     }
 
     @Override

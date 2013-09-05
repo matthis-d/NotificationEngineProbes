@@ -1,4 +1,4 @@
-package org.notificationengine.probes.probe;
+package com.notificationengine.probes.probe;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.HttpResponse;
@@ -8,11 +8,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.notificationengine.probes.constants.Constants;
-import org.notificationengine.probes.spring.SpringUtils;
-import org.springframework.beans.factory.annotation.Value;
+import com.notificationengine.probes.constants.Constants;
+import com.notificationengine.probes.spring.SpringUtils;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Properties;
 
 public abstract class Probe implements IProbe{
@@ -34,6 +34,8 @@ public abstract class Probe implements IProbe{
         Properties localSettingsProperties = (Properties) SpringUtils.getBean(Constants.LOCAL_SETTINGS_PROPERTIES);
 
         this.serverUrl = (String)localSettingsProperties.get(Constants.SERVER_URL);
+
+        this.lastTryTime = new Timestamp(new Date().getTime());
 
         this.notificationContext = new JSONObject();
         this.topicName = "";

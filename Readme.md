@@ -10,20 +10,17 @@ In this project, you'll find two built-in probes but you can still customize it 
 
 ### 2.1. Folder probe
 
-You can install the JAR in order to scan a specific folder. You have to install as many probes as there are folders to probe. You can choose what events will trigger a notification (deletion, creation or modification of a file in the folder), what will be the topic of each notification and you have to name the folder you want to scan.
+You can install the JAR in order to scan a specific folder. You have to install as many probes as there are folders to scan. You can choose the topic of each notification and you have to name the folder you want to scan.
  
 All of this configuration have to put in a folder named ```configuration``` at the same JAR's level. In this folder, you have to add a file named ```configuration.json``` and it has to have a structure like this : 
 ```JSON
 {
-    "channels": [
-        {
-            "id": "facturationChannel",
-            "topic": "facturation.societe2",
-            "probeType": "folderProbe",
-            "path": "/Users/Matthis/Desktop",
-            "events" : ["created", "modified", "deleted"]
-        }
-    ]
+    "id": "facturationChannel",
+    "topic": "facturation.societe2",
+    "probeType": "folderProbe",
+    "path": "/Users/Matthis/Desktop",
+    "period": 10000,
+    "subject": "File created or modified"
 }
 ```
 
@@ -32,7 +29,7 @@ Each time a file is added, modified or deleted, a notification is sent to the no
 {
     "topic": "facturation.societe2",
     "context": {
-        "event": "MODIFY",
+        "lastModified": "1378308741",
         "fileName" : "file-modified.txt"
     }
 }
@@ -47,19 +44,15 @@ At the moment, the database has to be MySQL.
 The configuration should be like the following one : 
 ```JSON
 {
-    "channels" : [
-        {
-            "id" : "helpdeskChannel",
-            "topic": "helpdesk.societe1",
-            "probeType" : "databaseProbe",
-            "user": "root",
-            "password" : "root",
-            "url" : "jdbc:mysql://localhost:3306/notification-engine",
-            "driverClassName": "com.mysql.jdbc.Driver",
-            "queries" : [
-                {"getLastUpdates" : "SELECT t.id, t.name, t.message FROM tableToWatch t WHERE t.updated_at > ?"}
-            ]
-        }
+    "id" : "helpdeskChannel",
+    "topic": "helpdesk.societe1",
+    "probeType" : "databaseProbe",
+    "user": "root",
+    "password" : "root",
+    "url" : "jdbc:mysql://localhost:3306/notification-engine",
+    "driverClassName": "com.mysql.jdbc.Driver",
+    "queries" : [
+        {"getLastUpdates" : "SELECT t.id, t.name, t.message FROM tableToWatch t WHERE t.updated_at > ?"}
     ]
 }
 ```

@@ -1,18 +1,12 @@
-package org.notificationengine.probes.probe;
+package com.notificationengine.probes.probe;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.notificationengine.probes.constants.Constants;
-import org.notificationengine.probes.spring.SpringUtils;
+import com.notificationengine.probes.constants.Constants;
+import com.notificationengine.probes.spring.SpringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -44,8 +38,6 @@ public class DatabaseProbe extends Probe{
         super();
         this.queries = new HashSet<>();
 
-        this.setLastTryTime(new Timestamp(new Date().getTime()));
-
         DataSource dataSource = (DataSource) SpringUtils.getBean("dataSource");
 
         this.setDataSource(dataSource);
@@ -60,8 +52,6 @@ public class DatabaseProbe extends Probe{
         this.url = url;
         this.driverClassName = driverClassName;
         this.queries = queries;
-
-        this.setLastTryTime(new Timestamp(new Date().getTime()));
 
         DataSource dataSource = (DataSource) SpringUtils.getBean("dataSource");
 

@@ -1,9 +1,7 @@
 {
-
     "id": "facturationChannel",
     "topic": "facturation.societe2",
     "subject" : "File modified",
     "probeType": "folderProbe",
     "path": "/Users/Matthis/Desktop"
 }
-

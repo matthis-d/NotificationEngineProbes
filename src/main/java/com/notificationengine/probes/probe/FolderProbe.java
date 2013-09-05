@@ -1,12 +1,11 @@
-package org.notificationengine.probes.probe;
+package com.notificationengine.probes.probe;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.notificationengine.probes.constants.Constants;
+import com.notificationengine.probes.constants.Constants;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
-import java.nio.file.*;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
@@ -30,8 +29,6 @@ public class FolderProbe extends Probe{
 
         this.setPathToWatch(pathToWatch);
 
-        this.setLastTryTime(new Timestamp(new Date().getTime()));
-
         this.listen();
 
     }
@@ -47,8 +44,6 @@ public class FolderProbe extends Probe{
         this.getAndSetPathFromOptions(options);
 
         this.setNotificationSubject((String) options.get(Constants.SUBJECT));
-
-        this.setLastTryTime(new Timestamp(new Date().getTime()));
 
         this.listen();
 
