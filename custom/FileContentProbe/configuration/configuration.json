@@ -4,5 +4,5 @@
     "subject" : "File modified",
     "probeType": "customProbe",
     "probeClass": "com.notificationengine.probes.custom.filecontentprobe.FileContentProbe",
-    "filePath": "/Users/Matthis/Desktop/hello.txt"
+    "filePath": "/Users/Matthis/Desktop/Hello.txt"
 }

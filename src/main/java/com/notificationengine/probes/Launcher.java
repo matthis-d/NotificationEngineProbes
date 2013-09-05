@@ -22,11 +22,27 @@ public class Launcher {
 
     static Logger LOGGER = Logger.getLogger(Launcher.class);
 
-    public static void main(String[] args) {
+    private String contextName;
+
+    public Launcher(String contextName) {
+
+        super();
+        this.contextName = contextName;
+    }
+
+    public String getContextName() {
+        return contextName;
+    }
+
+    public void setContextName(String contextName) {
+        this.contextName = contextName;
+    }
+
+    public void start() {
 
         LOGGER.info("Start the launcher");
 
-        ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"applicationContext.xml"});
+        ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {contextName});
 
         ConfigurationReader configurationReader = context.getBean(Constants.CONFIGURATION_READER, ConfigurationReader.class);
 

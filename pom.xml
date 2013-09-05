@@ -89,7 +89,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>org.notificationengine.probes.Launcher</mainClass>
+                            <mainClass>com.notificationengine.probes.Main</mainClass>
                         </manifest>
                         <!--Resources will be placed under conf/-->
                         <manifestEntries>

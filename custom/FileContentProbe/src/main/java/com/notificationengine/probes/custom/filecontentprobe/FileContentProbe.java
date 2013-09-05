@@ -28,7 +28,9 @@ public class FileContentProbe extends Probe{
 
         String filePath = (String) options.get(CustomConstants.FILE_PATH);
 
-        if(filePath == null && !StringUtils.isEmpty(filePath)) {
+        LOGGER.info("File path: " + filePath);
+
+        if(!StringUtils.isEmpty(filePath)) {
 
             this.fileToWatch = new File(filePath);
 
@@ -66,6 +68,8 @@ public class FileContentProbe extends Probe{
                 }
 
                 context.put(CustomConstants.FILE_CONTENT, fileContent);
+
+                this.setNotificationSubject("File content modified");
 
                 this.setNotificationContext(context);
 
