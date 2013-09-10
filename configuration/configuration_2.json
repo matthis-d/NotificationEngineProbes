@@ -1,13 +1,7 @@
 {
-    "id" : "helpdeskChannel",
-    "topic": "helpdesk.societe1",
-    "probeType" : "databaseProbe",
-    "user": "root",
-    "password" : "root",
-    "url" : "jdbc:mysql://localhost:3306/todoapp",
-    "driverClassName": "com.mysql.jdbc.Driver",
-    "queries" : [
-        {"getLastTasks" : "SELECT t.name FROM TASK t WHERE t.created_at > ?"},
-        {"getLastCompletedTasks" : "SELECT t.name FROM COMPLETED_TASK t WHERE t.completed_at > ?"}
-    ]
+    "id": "todoAppChannel",
+    "topic": "todoApp",
+    "subject" : "Tasks list exported by TodoApp",
+    "probeType": "folderProbe",
+    "paths": ["D:/temp/notificationengine/todoapp"]
 }

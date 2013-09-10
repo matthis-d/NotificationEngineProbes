@@ -1,5 +1,9 @@
 package com.notificationengine.probes.probe;
 
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Properties;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -8,12 +12,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
+
 import com.notificationengine.probes.constants.Constants;
 import com.notificationengine.probes.spring.SpringUtils;
-
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Properties;
 
 public abstract class Probe implements IProbe{
 
@@ -68,7 +69,7 @@ public abstract class Probe implements IProbe{
         HttpPost post = new HttpPost(url);
 
         try {
-            StringEntity params = new StringEntity(rawNotification.toString());
+            StringEntity params = new StringEntity(rawNotification.toString(), "UTF-8");
 
             post.setEntity(params);
 

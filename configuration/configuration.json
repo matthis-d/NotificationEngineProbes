@@ -1,7 +1,13 @@
 {
-    "id": "facturationChannel",
-    "topic": "facturation.societe2",
-    "subject" : "File modified",
-    "probeType": "folderProbe",
-    "paths": ["D:/temp/notificationengine/path1", "D:/temp/notificationengine/path2"]
+    "id" : "todoAppChannel",
+    "topic": "todoApp",
+    "subject" : "Task created in TodoApp",
+    "probeType" : "databaseProbe",
+    "user": "TODOAPP",
+    "password" : "TODOAPP",
+    "url" : "jdbc:oracle:thin:@localhost:1521:XE",
+    "driverClassName": "oracle.jdbc.driver.OracleDriver",
+    "queries" : [
+        {"getLastTasks" : "SELECT t.name AS \"content\" FROM TASK t WHERE t.created_at > ?"}
+    ]
 }

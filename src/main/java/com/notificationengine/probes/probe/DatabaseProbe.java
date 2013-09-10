@@ -40,6 +40,8 @@ public class DatabaseProbe extends Probe{
 
         this.setTopicName(topicName);
 
+        this.setNotificationSubject((String) options.get(Constants.SUBJECT));
+        
         this.user = (String) options.get(Constants.USER);
         this.password = (String) options.get(Constants.PASSWORD);
         this.url = (String) options.get(Constants.DATABASE_URL);
@@ -87,7 +89,7 @@ public class DatabaseProbe extends Probe{
 
             Collection<JSONObject> results = this.jdbcTemplate.query(
                 query,
-                new Object[]{this.getLastTryTime().toString()},
+                new Object[]{this.getLastTryTime()},
                 new RowMapper<JSONObject>() {
 
                     public JSONObject mapRow(ResultSet rs, int rowNum) throws SQLException {
