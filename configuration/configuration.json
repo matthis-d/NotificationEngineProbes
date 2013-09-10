@@ -1,16 +1,4 @@
 {
-<<<<<<< HEAD
-    "id" : "helpdeskChannel",
-    "topic": "helpdesk.societe1",
-    "probeType" : "databaseProbe",
-    "user": "root",
-    "password" : "root",
-    "subject": "${name} was created or modified",
-    "url" : "jdbc:mysql://localhost:3306/notification-engine",
-    "driverClassName": "com.mysql.jdbc.Driver",
-    "queries" : [
-        {"getLastUpdates" : "SELECT t.id, t.name, t.message FROM tableToWatch t WHERE t.updated_at > ?"}
-=======
     "id" : "todoAppChannel",
     "topic": "todoApp",
     "subject" : "Task created in TodoApp",
@@ -21,6 +9,5 @@
     "driverClassName": "oracle.jdbc.driver.OracleDriver",
     "queries" : [
         {"getLastTasks" : "SELECT t.name AS \"content\" FROM TASK t WHERE t.created_at > ?"}
->>>>>>> pr/7
     ]
 }
