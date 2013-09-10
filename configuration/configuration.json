@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "id" : "helpdeskChannel",
     "topic": "helpdesk.societe1",
     "probeType" : "databaseProbe",
@@ -9,5 +10,17 @@
     "driverClassName": "com.mysql.jdbc.Driver",
     "queries" : [
         {"getLastUpdates" : "SELECT t.id, t.name, t.message FROM tableToWatch t WHERE t.updated_at > ?"}
+=======
+    "id" : "todoAppChannel",
+    "topic": "todoApp",
+    "subject" : "Task created in TodoApp",
+    "probeType" : "databaseProbe",
+    "user": "TODOAPP",
+    "password" : "TODOAPP",
+    "url" : "jdbc:oracle:thin:@localhost:1521:XE",
+    "driverClassName": "oracle.jdbc.driver.OracleDriver",
+    "queries" : [
+        {"getLastTasks" : "SELECT t.name AS \"content\" FROM TASK t WHERE t.created_at > ?"}
+>>>>>>> pr/7
     ]
 }

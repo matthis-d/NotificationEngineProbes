@@ -1,7 +1,16 @@
 {
+<<<<<<< HEAD
     "id": "facturationChannel",
     "topic": "facturation.societe2",
     "subject" : "File modified",
     "probeType": "folderProbe",
     "paths": ["D:/temp/notificationengine/path1", "D:/temp/notificationengine/path2"]
 }
+=======
+    "id": "todoAppChannel",
+    "topic": "todoApp",
+    "subject" : "Tasks list exported by TodoApp",
+    "probeType": "folderProbe",
+    "paths": ["D:/temp/notificationengine/todoapp"]
+}
+>>>>>>> pr/7
